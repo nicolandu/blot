@@ -12,7 +12,8 @@ function lenMapping(x) {
 const minLen = 1;
 const angle = 20;
 
-const randomFactor = 0.15;
+const randomFactor = 0.05;
+const randomFactorProgression = 0.05;
 
 const t = new bt.Turtle()
   .left(90)
@@ -23,6 +24,7 @@ setDocDimensions(width, height);
 // store final lines here
 const finalLines = [];
 
+const allLines = [];
 function rec(x) {
   if (x<minLen) return;
   const line = [];
@@ -31,7 +33,10 @@ function rec(x) {
   for (let i = 0; i < 3; i++) {
     t.forward(x/4);
     t.left(90);
-    const step = bt.randInRange(-randomFactor*x, randomFactor*x);
+    const step = bt.randInRange(
+      -randomFactor*x-randomFactorProgression*i*x,
+      randomFactor*x+randomFactorProgression*i*x
+    );
     t.forward(step);
     line.push(t.pos);
     t.forward(-step);
@@ -40,21 +45,22 @@ function rec(x) {
   t.forward(x/4);
   line.push(t.pos);
   
-  //finalLines.push(line);
+  allLines.push(line);
   t.left(angle);
   rec(lenMapping(x));
   t.right(2*angle);
   rec(lenMapping(x));
   t.left(angle);
   t.forward(-x);
-}
-
-  
-  
+} 
 
 rec(28);
+console.log(allLines);
+for (let line in allLines) {
+  const tmp = [bt.catmullRom(allLines[line])];
+  bt.join(finalLines, tmp);
+}
 
-bt.join(finalLines, t.path);
 
 bt.translate(
   finalLines,
