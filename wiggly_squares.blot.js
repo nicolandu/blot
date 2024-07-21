@@ -65,10 +65,28 @@ bt.join(finalLines, [
   ]
 ]);
 
-for (let ring = 0; ring < (gridDim / 2) - 1; ring++) {
-  const curve = bt.catmullRom(allPos[ring]);
-  bt.join(finalLines, [curve]);
+const allPosSpiral = [];
+for (let ring = 0; ring < (gridDim / 2); ring++) {
+  // left
+  for (let i = ring; i < gridDim-ring; i++) {
+    allPosSpiral.push(allPos[ring][i]);
+  }
+  // top
+  for (let i = ring+1; i < gridDim-ring; i++) {
+    allPosSpiral.push(allPos[i][gridDim-ring-1]);
+  }
+  // right
+  for (let i = gridDim-ring-2; i >= ring; i--) {
+    allPosSpiral.push(allPos[gridDim-ring-1][i]);
+  }
+  // bottom
+  for (let i = gridDim-ring-2; i > ring; i--) {
+    allPosSpiral.push(allPos[i][ring]);
+  }
 }
+
+const curve = bt.catmullRom(allPosSpiral);
+bt.join(finalLines, [curve]);
 
 
 
