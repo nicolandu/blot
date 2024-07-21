@@ -68,29 +68,26 @@ bt.join(finalLines, [
 const allPosSpiral = [];
 for (let ring = 0; ring < (gridDim / 2); ring++) {
   // left
-  for (let i = ring; i < gridDim-ring; i++) {
+  for (let i = ring; i < gridDim - ring; i++) {
     allPosSpiral.push(allPos[ring][i]);
   }
   // top
-  for (let i = ring+1; i < gridDim-ring; i++) {
-    allPosSpiral.push(allPos[i][gridDim-ring-1]);
+  for (let i = ring + 1; i < gridDim - ring; i++) {
+    allPosSpiral.push(allPos[i][gridDim - ring - 1]);
   }
   // right
-  for (let i = gridDim-ring-2; i >= ring; i--) {
-    allPosSpiral.push(allPos[gridDim-ring-1][i]);
+  for (let i = gridDim - ring - 2; i >= ring; i--) {
+    allPosSpiral.push(allPos[gridDim - ring - 1][i]);
   }
   // bottom
-  for (let i = gridDim-ring-2; i > ring; i--) {
+  for (let i = gridDim - ring - 2; i > ring; i--) {
     allPosSpiral.push(allPos[i][ring]);
   }
 }
 
-const curve = bt.catmullRom(allPosSpiral);
-bt.join(finalLines, [curve]);
-
-
-
-const finalLinesBounds = bt.bounds(finalLines);
+const curve = [bt.catmullRom(allPosSpiral)];
+bt.offset(curve, 1, { arcTolerance: 0.001 });
+bt.join(finalLines, curve);
 
 bt.translate(
   finalLines,
