@@ -113,13 +113,20 @@ const signaturePoints = [
   [-3.44, -1.43],
 ];
 
+for (let i = 0; i < signaturePoints.length; i++) {
+  signaturePoints[i][0] += bt.randInRange(-0.2,0.2);
+  signaturePoints[i][1] += bt.randInRange(-0.2,0.2);
+}
+
 const signature = [bt.catmullRom(signaturePoints)];
+
+bt.rotate(signature, bt.randInRange(-2,2), bt.bounds(signature).cc);
 
 bt.translate(
   signature,
   [
-    (gridDim + 1) / 2 * gridInterval-1,
-    -(gridDim + 1) / 2 * gridInterval-1
+    (gridDim + 1) / 2 * gridInterval-1+bt.randInRange(-0.5,0.5),
+    -(gridDim + 1) / 2 * gridInterval-1+bt.randInRange(-0.5,0.5)
   ]);
 
 bt.join(finalLines, signature);
