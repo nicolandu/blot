@@ -118,7 +118,7 @@ for (let i = 0; i < signaturePoints.length; i++) {
   signaturePoints[i][1] += bt.randInRange(-0.2,0.2);
 }
 
-const signature = [bt.catmullRom(signaturePoints)];
+const signature = [bt.catmullRom(signaturePoints, 16384)];
 
 bt.rotate(signature, bt.randInRange(-2,2), bt.bounds(signature).cc);
 
