@@ -1,4 +1,7 @@
 // Wiggly Squares by Nicolas Landucci is GPLv3-licensed.
+// NOTE TO SELF: Arrays are passed by reference. To "duplicate" points,
+// use Array.slice() .
+
 // mm
 const width = 125;
 const height = 125;
@@ -23,9 +26,17 @@ const randomFactor = 0.05;
 // how much randomFactor increases at each sample on a branch
 const randomFactorProgression = 0.05;
 
-const circleRadius = 30;
+const circleRadius = 55;
 const circlePointCount = 3000;
+const circleRandomFactor = 2;
 const drawCircle = true;
+
+const signaturePointPositionRandomFactor = 0.05;
+const signaturePositionRandomFactor = 0.5;
+const signatureRotationRandomFactor = 2;
+const jitterSignature = true;
+const jitterInterval = 0.002;
+const jitterRandomFactor = 0.5;
 
 // we only use the Turtle to measure lines, not to draw them, unless showSkeleton is active
 // in any case, pen down is OK
@@ -74,13 +85,24 @@ for (let i = 0; i < 6; i++) {
   rec(initialLen);
   t.right(60);
 }
-console.log(allLines);
 for (let line in allLines) {
   const tmp = [bt.catmullRom(allLines[line])];
   bt.join(finalLines, tmp);
 }
 
 if (showSkeleton) bt.join(finalLines, t.path);
+
+if (drawCircle) {
+  const circlePoints = [];
+  for (let i=0; i<circlePointCount; i++) {
+    const val = bt.randInRange(-circleRandomFactor,circleRandomFactor);
+    circlePoints.push([Math.cos(i*2*Math.PI/circlePointCount)*(circleRadius+val),
+                       Math.sin(i*2*Math.PI/circlePointCount)*(circleRadius+val)]);
+  }
+  // close the circle
+  circlePoints.push(circlePoints[0].slice());
+  bt.join(finalLines, [circlePoints]);
+}
 
 bt.translate(
   finalLines,
@@ -109,32 +131,50 @@ const signaturePoints = [
 ];
 
 for (let i = 0; i < signaturePoints.length; i++) {
-  signaturePoints[i][0] += bt.randInRange(-0.2, 0.2);
-  signaturePoints[i][1] += bt.randInRange(-0.2, 0.2);
+  signaturePoints[i][0] += bt.randInRange(
+    -signaturePointPositionRandomFactor,
+    signaturePointPositionRandomFactor);
+  signaturePoints[i][1] += bt.randInRange(
+    -signaturePointPositionRandomFactor,
+    signaturePointPositionRandomFactor);
 }
 
-const signature = [bt.catmullRom(signaturePoints)];
+const signatureBase = bt.catmullRom(signaturePoints);
+let signature = [];
 
-bt.rotate(signature, bt.randInRange(-2, 2), bt.bounds(signature).cc);
+if (jitterSignature) {
+  for (let i = 0; i <= 1; i+=jitterInterval) {
+    const val = bt.randInRange(-jitterRandomFactor,jitterRandomFactor);
+    const point = bt.getPoint([signatureBase], i);
+    const normal = bt.getNormal([signatureBase], i);
+    signature.push([
+      point[0]+normal[0]*val,
+      point[1]+normal[1]*val
+    ]);
+  }
+
+} else {
+  signature = signatureBase;
+}
+
+signature = [signature];
+
+bt.rotate(signature, bt.randInRange(
+      -signatureRotationRandomFactor, signatureRotationRandomFactor
+  ), bt.bounds(signature).cc
+);
 bt.translate(
   signature,
   [
-    width -15 + bt.randInRange(-0.5, 0.5),
-    15 + bt.randInRange(-0.5, 0.5)
+    width -15 + bt.randInRange(
+      -signaturePositionRandomFactor, signaturePositionRandomFactor),
+    15 + bt.randInRange(
+      -signaturePositionRandomFactor, signaturePositionRandomFactor)
   ],
   bt.bounds(signature).cc
 );
-
 bt.join(finalLines, signature);
 
-if (drawCircle) {
-  const circlePoints = [];
-  for (let i=0; i<=circlePointCount; i++) {
-    circlePoints.push([Math.cos(i*2*Math.PI/circlePointCount), Math.sin(i*2*Math.PI/circlePointCount)]);
-  }
-  bt.join(finalLines, [circlePoints]);
-}
-  
 
 
 
