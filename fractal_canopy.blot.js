@@ -1,4 +1,4 @@
-// Wiggly Squares by Nicolas Landucci is GPLv3-licensed.
+// Fractal Canopy by Nicolas Landucci is GPLv3-licensed.
 // mm
 const width = 125;
 const height = 125;

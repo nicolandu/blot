@@ -1,4 +1,4 @@
-// Wiggly Squares by Nicolas Landucci is GPLv3-licensed.
+// Fractal Circle by Nicolas Landucci is GPLv3-licensed.
 // NOTE TO SELF: Arrays are passed by reference. To "duplicate" points,
 // use Array.slice() .
 
