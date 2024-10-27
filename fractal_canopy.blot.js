@@ -15,8 +15,8 @@ function lenMapping(x) {
 const initialLen = 28;
 
 // determines branch length threshold
-const minLen = 1;
-const angle = 20;
+const minLen = 4;
+const angle = 25;
 
 // base value
 const randomFactor = 0.05;
@@ -69,6 +69,7 @@ rec(initialLen);
 console.log(allLines);
 for (let line in allLines) {
   const tmp = [bt.catmullRom(allLines[line])];
+  bt.simplify(tmp,.1);
   bt.join(finalLines, tmp);
 }
 
@@ -106,6 +107,7 @@ for (let i = 0; i < signaturePoints.length; i++) {
 }
 
 const signature = [bt.catmullRom(signaturePoints)];
+bt.simplify(signature,.1);
 
 bt.rotate(signature, bt.randInRange(-2,2), bt.bounds(signature).cc);
 bt.translate(
